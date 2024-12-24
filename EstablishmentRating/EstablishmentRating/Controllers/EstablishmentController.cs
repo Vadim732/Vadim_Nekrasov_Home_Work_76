@@ -1,6 +1,7 @@
 ﻿using EstablishmentRating.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace EstablishmentRating.Controllers;
 
@@ -42,7 +43,28 @@ public class EstablishmentController : Controller
         {
             return NotFound();
         }
-        var establishment = _context.Establishments.FirstOrDefault(e => e.Id == id);
+        var establishment = _context.Establishments.Include(a => a.Reviews).FirstOrDefault(e => e.Id == id);
         return View(establishment);
     }
+    [HttpPost]
+    public IActionResult AddReview(Review review)
+    {
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, errors });
+        }
+
+        _context.Reviews.Add(review);
+        _context.SaveChanges();
+        var newReview = new
+        {
+            title = review.Title,
+            description = review.Description,
+            stars = review.Stars
+        };
+
+        return Json(new { success = true, review = newReview });
+    }
+
 }

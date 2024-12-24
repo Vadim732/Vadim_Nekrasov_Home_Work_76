@@ -9,9 +9,109 @@
         <div class="col-6">
             <h1>@Model.Name</h1>
             <p>@Model.Description</p>
+            <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">Leave a Review</button>
         </div>
         <div class="col-6">
             <img src="@Model.Image" class="img-fluid" style="height: 200px"/>
         </div>
     </div>
+    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="reviewModalLabel">Add a Review</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form id="reviewForm">
+                        <div class="mb-3">
+                            <label for="Title" class="form-label">Title</label>
+                            <input type="text" class="form-control" id="Title" required />
+                        </div>
+                        <div class="mb-3">
+                            <label for="Description" class="form-label">Comment</label>
+                            <textarea class="form-control" id="Description" rows="3" required></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label for="Stars" class="form-label">Rating (1-5)</label>
+                            <select class="form-control" id="Stars" required>
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                <option value="5">5</option>
+                            </select>
+                        </div>
+                        <input type="hidden" id="EstablishmentId" value="@Model.Id" />
+                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="reviews mt-4">
+        <h3>Reviews</h3>
+        @foreach (var review in Model.Reviews)
+        {
+            <div class="review">
+                <h5>@review.Title</h5>
+                <p>@review.Description</p>
+                <p>Rating: @review.Stars</p>
+            </div>
+        }
+    </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        $(document).ready(function () {
+            $("#reviewForm").on("submit", function (e) {
+                e.preventDefault();
+
+                var stars = $("#Stars").val();
+                var title = $("#Title").val();
+                var description = $("#Description").val();
+                var establishmentId = $("#EstablishmentId").val();
+                if (!stars || !title || !description) {
+                    alert("Please fill in all fields.");
+                    return;
+                }
+                $.ajax({
+                    url: "/Establishment/AddReview/",
+                    type: "POST",
+                    data: {
+                        Stars: stars,
+                        Title: title,
+                        Description: description,
+                        EstablishmentId: establishmentId
+                    },
+                    success: function (response) {
+                        if (response.success) {
+                            var reviewHtml = `
+                                <div class="review">
+                                    <h5>${response.review.title}</h5>
+                                    <p>${response.review.description}</p>
+                                    <p>Rating: ${response.review.stars}</p>
+                                </div>
+                            `;
+                            $(".reviews").append(reviewHtml);
+
+                            $("#reviewModal").modal('hide');
+                            $("#reviewForm")[0].reset();
+                        } else {
+                            alert("Error submitting review!");
+                        }
+                    },
+                    error: function (xhr, status, error) {
+                        var errorMessage = "Error submitting review!";
+                        if (xhr.responseJSON && xhr.responseJSON.errors) {
+                            errorMessage = xhr.responseJSON.errors.join(", ");
+                        }
+                        alert(errorMessage);
+                    }
+                });
+            });
+        });
+    </script>
+}
