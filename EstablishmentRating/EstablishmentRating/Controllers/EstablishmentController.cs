@@ -36,4 +36,13 @@ public class EstablishmentController : Controller
         }
         return View(establishment);
     }
+    public IActionResult Details(int id)
+    {
+        if (id == null)
+        {
+            return NotFound();
+        }
+        var establishment = _context.Establishments.FirstOrDefault(e => e.Id == id);
+        return View(establishment);
+    }
 }

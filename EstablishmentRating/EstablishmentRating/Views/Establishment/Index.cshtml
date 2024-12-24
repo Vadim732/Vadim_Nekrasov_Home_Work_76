@@ -10,9 +10,9 @@
         {
             <div class="col-md-3 mb-4 d-flex align-items-stretch">
                 <div class="card h-100 shadow-sm">
-                    <img src="@a.Image" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="Image of @a.Name">
+                    <a asp-action="Details" asp-route-id="@a.Id"><img src="@a.Image" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="Image of @a.Name"></a>
                     <div class="card-body text-center">
-                        <h5 class="card-title">@a.Name</h5>
+                        <a asp-action="Details" asp-route-id="@a.Id"><h5 class="card-title">@a.Name</h5></a>
                     </div>
                 </div>
             </div>
