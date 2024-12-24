@@ -15,10 +15,31 @@ public class EstablishmentController : Controller
         _userManager = userManager;
         _context = context;
     }
-    public IActionResult Index()
+    public IActionResult Index(int page = 1)
     {
+        int pageSize = 8;
         var establishments = _context.Establishments.ToList();
         return View(establishments);
+    }
+    
+    [HttpGet]
+    public IActionResult Search(string query)
+    {
+        if (string.IsNullOrWhiteSpace(query))
+        {
+            return Json(new { success = true, establishments = new List<Establishment>() });
+        }
+        var results = _context.Establishments
+            .Where(e => e.Name.Contains(query) || e.Description.Contains(query))
+            .Select(e => new
+            {
+                e.Id,
+                e.Name,
+                e.Image
+            })
+            .ToList();
+
+        return Json(new { success = true, establishments = results });
     }
 
     public IActionResult CreateEstablishment()
