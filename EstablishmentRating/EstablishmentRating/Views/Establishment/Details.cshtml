@@ -43,12 +43,17 @@
                             </select>
                         </div>
                         <input type="hidden" id="EstablishmentId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-primary">Submit Review</button>
+                        <button type="submit" class="btn btn-primary submit-review">Submit Review</button>
                     </form>
                 </div>
             </div>
         </div>
     </div>
+    
+    <div class="rating pt-4 pb-4" style="width: 100%; border-top: 1px solid black; border-bottom: 1px solid black;">
+        
+    </div>
+    
     <div class="reviews mt-4">
         <h3>Reviews</h3>
         @foreach (var review in Model.Reviews)
@@ -99,6 +104,8 @@
 
                             $("#reviewModal").modal('hide');
                             $("#reviewForm")[0].reset();
+                            
+                            updateRating();
                         } else {
                             alert("Error submitting review!");
                         }
@@ -112,6 +119,25 @@
                     }
                 });
             });
+            
+            function updateRating() {
+                $.ajax({
+                    url: '@Url.Action("GetRating")',
+                    data: {
+                        id: @Model.Id
+                    },
+                    success: function (response) {
+                        $('.rating').html(response);
+                    }
+                });
+            }
+
+            updateRating();
+
+            $('.submit-review').click(function () {
+                updateRating();
+            });
         });
     </script>
+    <script src="https://kit.fontawesome.com/af54fdaf3a.js" crossorigin="anonymous"></script>
 }
