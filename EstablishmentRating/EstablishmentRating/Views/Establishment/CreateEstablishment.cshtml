@@ -1,4 +1,4 @@
-@model Establishment
+@model EstablishmentRating.ViewModels.CreateEstablishmentViewModel
 
 @{
     ViewBag.Title = "Create Establishment";
@@ -7,18 +7,29 @@
 <div class="container">
     <h1>Add new place</h1>
     <form asp-action="CreateEstablishment" method="post" enctype="multipart/form-data">
+        <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
             <label for="">Title</label>
             <input type="text" class="form-control" asp-for="Name" placeholder="Enter title">
+            <span asp-validation-for="Name" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label for="">Description</label>
             <textarea class="form-control" asp-for="Description" rows="5" placeholder="Enter description (at least 30 characters)"></textarea>
+            <span asp-validation-for="Description" class="text-danger"></span>
         </div>
         <div class="form-group">
             <label for="">Main photo</label>
-            <input class="form-control" asp-for="Image">
+            <input type="file" class="form-control" asp-for="Image">
+            <span asp-validation-for="Image" class="text-danger"></span>
         </div>
         <button type="submit" class="btn btn-primary">Submit new place</button>
     </form>
 </div>
+
+@section Scripts
+{
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}
