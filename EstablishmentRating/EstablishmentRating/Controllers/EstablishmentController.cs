@@ -1,4 +1,5 @@
 ﻿using EstablishmentRating.Models;
+using EstablishmentRating.ViewModels;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -9,11 +10,13 @@ public class EstablishmentController : Controller
 {
     private readonly EstablishmentRatingContext _context;
     private readonly UserManager<User> _userManager;
+    private readonly IWebHostEnvironment _environment;
 
-    public EstablishmentController(UserManager<User> userManager, EstablishmentRatingContext context)
+    public EstablishmentController(UserManager<User> userManager, EstablishmentRatingContext context, IWebHostEnvironment environment)
     {
         _userManager = userManager;
         _context = context;
+        _environment = environment;
     }
     public IActionResult Index()
     {
@@ -27,15 +30,35 @@ public class EstablishmentController : Controller
     }
 
     [HttpPost]
-    public IActionResult CreateEstablishment(Establishment establishment)
+    public async Task<IActionResult> CreateEstablishment(CreateEstablishmentViewModel model)
     {
         if (ModelState.IsValid)
         {
-            _context.Establishments.Add(establishment);
-            _context.SaveChanges();
+            string fileName = $"establishment_{model.Name}{Path.GetExtension(model.Image.FileName)}";
+            
+            if (model.Image != null && model.Image.Length > 0 && model.Image.ContentType.StartsWith("image/"))
+            {
+                string filePath = Path.Combine(_environment.WebRootPath, "establishmentImages", fileName);
+
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+
+                using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await model.Image.CopyToAsync(stream);
+                }
+            }
+
+            Establishment establishment = new Establishment()
+            {
+                Name = model.Name,
+                Image = $"/establishmentImages/{fileName}",
+                Description = model.Description
+            };
+            await _context.Establishments.AddAsync(establishment);
+            await _context.SaveChangesAsync();
             return RedirectToAction("Index");
         }
-        return View(establishment);
+        return View(model);
     }
     public IActionResult Details(int id)
     {
