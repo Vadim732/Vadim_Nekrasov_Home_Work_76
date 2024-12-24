@@ -4,11 +4,14 @@
     ViewBag.Title = "All Establishments";
 }
 
-<div class="container mt-4">
-    <div class="row">
+<div class="mt-4">
+    <div class="mb-4">
+        <input id="searchInput" class="form-control" type="search" placeholder="Поиск..." aria-label="Search">
+    </div>
+    <div class="row" id="establishmentsContainer">
         @foreach (var a in Model)
         {
-            <div class="col-md-3 mb-4 d-flex align-items-stretch">
+            <div class="col-md-3 mb-4 d-flex align-items-stretch establishment">
                 <div class="card h-100 shadow-sm">
                     <a asp-action="Details" asp-route-id="@a.Id"><img src="@a.Image" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="Image of @a.Name"></a>
                     <div class="card-body text-center">
@@ -19,3 +22,39 @@
         }
     </div>
 </div>
+
+@section Scripts
+{
+    <script>
+        document.getElementById('searchInput').addEventListener('input', function () {
+            const query = this.value.trim();
+            fetch(`/Establishment/Search?query=${encodeURIComponent(query)}`)
+                .then(response => response.json())
+                .then(data => {
+                    const container = document.getElementById('establishmentsContainer');
+                    container.innerHTML = '';
+                    if (data.success && data.establishments.length > 0) {
+                        data.establishments.forEach(establishment => {
+                            const card = `
+                                <div class="col-md-3 mb-4 d-flex align-items-stretch establishment">
+                                    <div class="card h-100 shadow-sm">
+                                        <a href="/Establishment/Details/${establishment.id}">
+                                            <img src="${establishment.image}" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="Image of ${establishment.name}">
+                                        </a>
+                                        <div class="card-body text-center">
+                                            <a href="/Establishment/Details/${establishment.id}">
+                                                <h5 class="card-title">${establishment.name}</h5>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>`;
+                            container.insertAdjacentHTML('beforeend', card);
+                        });
+                    } else {
+                        container.innerHTML = '<p class="text-center">Заведений не найдено (это печально :с)</p>';
+                    }
+                })
+                .catch(error => console.error('Ошибка:', error));
+        });
+    </script>
+}

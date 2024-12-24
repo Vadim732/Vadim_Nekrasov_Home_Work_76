@@ -13,21 +13,23 @@
 <header>
     <nav class="navbar navbar-expand-sm navbar-toggleable-sm navbar-light bg-dark border-bottom box-shadow mb-3">
         <div class="container-fluid">
-                <a id="chat-button" class="navbar-brand text-white ml-1" asp-area="" asp-controller="Establishment" asp-action="Index"><i class="fa-regular fa-star-half-stroke"></i> Заведения</a>
+                <a id="chat-button" class="navbar-brand text-white ml-1" asp-area="" asp-controller="Establishment" asp-action="Index"><i class="fa-regular fa-star-half-stroke HHL"></i> Заведения</a>
             <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
                     aria-expanded="false" aria-label="Toggle navigation">
                 <span class="navbar-toggler-icon"></span>
             </button>
             <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
                 <ul class="navbar-nav flex-grow-1">
-                    
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="nav-item ml-2">
+                            <a class="btn btn-light nav-link text-dark" asp-action="CreateEstablishment" asp-controller="Establishment"><i class="fa-solid fa-square-plus HHL"></i> Создать <strong class="HHL">заведение</strong></a>
+                        </li>
+                    }
                 </ul>
                 <ul class="navbar-nav d-flex">
                     @if (User.Identity.IsAuthenticated)
                     {
-                        <li class="nav-item">
-                            <a class="btn btn-light nav-link text-dark" asp-action="CreateEstablishment" asp-controller="Establishment">Создать новое заведение</a>
-                        </li>
                         <li class="nav-item ml-1">
                             <a class="btn btn-light nav-link text-dark" href="@Url.Action("Profile", "Account", new { userId = @ViewBag.currentUserId })"><i class="fa-solid fa-user"></i> Профиль</a>
                         </li>
