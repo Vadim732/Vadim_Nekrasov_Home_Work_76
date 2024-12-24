@@ -90,6 +90,35 @@ public class EstablishmentController : Controller
         var establishment = _context.Establishments.Include(a => a.Reviews).FirstOrDefault(e => e.Id == id);
         return View(establishment);
     }
+
+    [HttpGet]
+    public async Task<IActionResult> GetRating(int id)
+    {
+        if (id == 0)
+        {
+            return NotFound();
+        }
+        Establishment establishment = await _context.Establishments.Include(e=> e.Reviews).FirstOrDefaultAsync(e => e.Id == id);
+        if (establishment == null)
+        {
+            return NotFound();
+        }
+        List<Review> reviews = establishment.Reviews.ToList();
+        double average = 0;
+        if (reviews != null)
+        {
+            List<int> allRatings = new List<int>();
+            for (int i = 0; i < reviews.Count; i++)
+            {
+               allRatings.Add(reviews[i].Stars);
+            }
+            average = allRatings.Average();
+            average = Math.Round(average, 1);
+        }
+
+        return PartialView("Rating", average);
+    }
+    
     [HttpPost]
     public IActionResult AddReview(Review review)
     {
