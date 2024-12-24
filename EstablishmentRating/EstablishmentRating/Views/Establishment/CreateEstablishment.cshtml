@@ -1,0 +1,24 @@
+@model Establishment
+
+@{
+    ViewBag.Title = "Create Establishment";
+}
+
+<div class="container">
+    <h1>Add new place</h1>
+    <form asp-action="CreateEstablishment" method="post" enctype="multipart/form-data">
+        <div class="form-group">
+            <label for="">Title</label>
+            <input type="text" class="form-control" asp-for="Name" placeholder="Enter title">
+        </div>
+        <div class="form-group">
+            <label for="">Description</label>
+            <textarea class="form-control" asp-for="Description" rows="5" placeholder="Enter description (at least 30 characters)"></textarea>
+        </div>
+        <div class="form-group">
+            <label for="">Main photo</label>
+            <input class="form-control" asp-for="Image">
+        </div>
+        <button type="submit" class="btn btn-primary">Submit new place</button>
+    </form>
+</div>

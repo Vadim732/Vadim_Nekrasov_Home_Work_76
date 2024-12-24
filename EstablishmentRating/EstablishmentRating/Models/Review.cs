@@ -11,5 +11,5 @@ public class Review
     public User? User { get; set; }
     
     public int? EstablishmentId { get; set; }
-    public User? Establishment { get; set; }
+    public Establishment? Establishment { get; set; }
 }

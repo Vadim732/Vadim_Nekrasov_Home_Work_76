@@ -7,6 +7,8 @@ namespace EstablishmentRating.Models;
 public class EstablishmentRatingContext : IdentityDbContext<User, IdentityRole<int>, int>
 {
     public DbSet<User> Users { get; set; }
+    public DbSet<Establishment> Establishments { get; set; }
+    public DbSet<Review> Reviews { get; set; }
     
     public EstablishmentRatingContext(DbContextOptions<EstablishmentRatingContext> options) : base(options) {}
     

@@ -11,7 +11,7 @@ public class Establishment
     [Url]
     public string Image { get; set; }
     [Required]
-    [MinLength(60, ErrorMessage = "Описание должно быть не короче 60 символов! Расскажите о своём заведении подробнее с:")]
+    [MinLength(30, ErrorMessage = "Описание должно быть не короче 30 символов! Расскажите о своём заведении подробнее с:")]
     public string Description { get; set; }
     
     public int? UserId { get; set; }
