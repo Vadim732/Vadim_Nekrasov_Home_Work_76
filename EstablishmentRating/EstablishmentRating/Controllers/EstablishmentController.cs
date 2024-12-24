@@ -116,7 +116,7 @@ public class EstablishmentController : Controller
             average = Math.Round(average, 1);
         }
 
-        return PartialView("Rating", average);
+        return PartialView("_RatingPartialView", average);
     }
     
     [HttpPost]
