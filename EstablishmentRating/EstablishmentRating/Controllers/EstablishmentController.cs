@@ -122,7 +122,7 @@ public class EstablishmentController : Controller
         {
             return NotFound();
         }
-        var establishment = _context.Establishments.Include(a => a.Reviews).FirstOrDefault(e => e.Id == id);
+        var establishment = _context.Establishments.Include(a => a.Reviews).Include(e=> e.GalleryImages).FirstOrDefault(e => e.Id == id);
         return View(establishment);
     }
 
