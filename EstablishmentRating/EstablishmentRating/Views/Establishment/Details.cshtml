@@ -36,11 +36,13 @@
             <h4 class="fw-bold">Reviews</h4>
             @foreach (var review in Model.Reviews)
             {
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">@review.Title</h5>
-                        <p class="card-text">@review.Description</p>
-                        <p class="card-text text-muted">Rating: @review.Stars</p>
+                <div class="reviews">
+                    <div class="card mb-3 shadow-sm">
+                        <div class="card-body">
+                            <h5 class="card-title fw-bold">@review.Title</h5>
+                            <p class="card-text">@review.Description</p>
+                            <p class="card-text text-muted">Rating: @review.Stars</p>
+                        </div>
                     </div>
                 </div>
             }
@@ -110,11 +112,13 @@
                     success: function (response) {
                         if (response.success) {
                             var reviewHtml = `
-                                <div class="review">
-                                    <h5>${response.review.title}</h5>
-                                    <p>${response.review.description}</p>
-                                    <p>Rating: ${response.review.stars}</p>
+                            <div class="card mb-3 shadow-sm ">
+                                <div class="card-body">
+                                    <h5 class="card-title fw-bold">${response.review.title}</h5>
+                                    <p class="card-text">${response.review.description}</p>
+                                    <p class="card-text text-muted">Rating: ${response.review.stars}</p>
                                 </div>
+                            </div>
                             `;
                             $(".reviews").append(reviewHtml);
 
