@@ -35,9 +35,18 @@
                         data.forEach(establishment => {
                             const ratingElement = document.getElementById(`rating-${establishment.id}`);
                             if (ratingElement) {
-                                ratingElement.textContent = establishment.rating > 0 
-                                    ? `Рейтинг: ${establishment.rating}` 
-                                    : 'Рейтинг отсутствует';
+                                const rating = establishment.rating;
+                                let starsHtml = '';
+                                for (let i = 1; i <= 5; i++) {
+                                    if (rating >= i) {
+                                        starsHtml += '<i class="fa-solid fa-star" style="color: black;"></i>';
+                                    } else if (rating > (i - 1) && rating < i) {
+                                        starsHtml += '<i class="fa-regular fa-star-half-stroke" style="color: black;"></i>';
+                                    } else {
+                                        starsHtml += '<i class="fa-regular fa-star" style="color: black;"></i>';
+                                    }
+                                }
+                                ratingElement.innerHTML = `${starsHtml} <span>${rating}</span>`;
                             }
                         });
                     }
