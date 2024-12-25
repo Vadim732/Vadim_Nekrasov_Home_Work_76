@@ -16,6 +16,7 @@
                     <a asp-action="Details" asp-route-id="@a.Id"><img src="@a.Image" class="card-img-top img-fluid" style="object-fit: cover; height: 200px;" alt="Image of @a.Name"></a>
                     <div class="card-body text-center">
                         <a asp-action="Details" asp-route-id="@a.Id"><h5 class="card-title">@a.Name</h5></a>
+                        <div class="rating" id="rating-@a.Id">Загрузка...</div>
                     </div>
                 </div>
             </div>
@@ -26,6 +27,26 @@
 @section Scripts
 {
     <script>
+        function loadRatings() {
+            fetch('/Establishment/GetAllRatings')
+                .then(response => response.json())
+                .then(data => {
+                    if (data) {
+                        data.forEach(establishment => {
+                            const ratingElement = document.getElementById(`rating-${establishment.id}`);
+                            if (ratingElement) {
+                                ratingElement.textContent = establishment.rating > 0 
+                                    ? `Рейтинг: ${establishment.rating}` 
+                                    : 'Рейтинг отсутствует';
+                            }
+                        });
+                    }
+                })
+                .catch(error => console.error('Ошибка загрузки рейтингов:', error));
+        }
+        document.addEventListener('DOMContentLoaded', function () {
+            loadRatings();
+        });
         document.getElementById('searchInput').addEventListener('input', function () {
             const query = this.value.trim();
             fetch(`/Establishment/Search?query=${encodeURIComponent(query)}`)
@@ -45,11 +66,13 @@
                                             <a href="/Establishment/Details/${establishment.id}">
                                                 <h5 class="card-title">${establishment.name}</h5>
                                             </a>
+                                            <div class="rating" id="rating-${establishment.id}">Загрузка...</div>
                                         </div>
                                     </div>
                                 </div>`;
                             container.insertAdjacentHTML('beforeend', card);
                         });
+                        loadRatings();
                     } else {
                         container.innerHTML = '<p class="text-center">Заведений не найдено (это печально :с)</p>';
                     }

@@ -118,6 +118,20 @@ public class EstablishmentController : Controller
 
         return PartialView("_RatingPartialView", average);
     }
+    [HttpGet]
+    public async Task<IActionResult> GetAllRatings()
+    {
+        var establishments = await _context.Establishments
+            .Include(e => e.Reviews)
+            .Select(e => new 
+            {
+                Id = e.Id,
+                Rating = e.Reviews.Any() ? Math.Round(e.Reviews.Average(r => r.Stars), 1) : 0
+            })
+            .ToListAsync();
+
+        return Json(establishments);
+    }
     
     [HttpPost]
     public IActionResult AddReview(Review review)
