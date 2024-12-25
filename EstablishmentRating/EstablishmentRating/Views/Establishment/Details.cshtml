@@ -3,69 +3,85 @@
 @{
     ViewBag.Title = "Details";
 }
-
-<div class="container">
-    <div class="row">
-        <div class="col-6">
-            <h1>@Model.Name</h1>
-            <p>@Model.Description</p>
+<div class="container my-4">
+    <div class="row g-4">
+        <div class="col-md-6">
+            <h1 class="fw-bold text-break display-5">@Model.Name</h1>
+            <p class="text-muted text-break">@Model.Description</p>
             <button class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#reviewModal">Leave a Review</button>
         </div>
-        <div class="col-6">
-            <img src="@Model.Image" class="img-fluid" style="height: 200px"/>
+        <div class="col-md-6">
+            <img src="@Model.Image" class="img-fluid rounded shadow" alt="Establishment Image" />
         </div>
     </div>
-    <div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
-        <div class="modal-dialog">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="reviewModalLabel">Add a Review</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <form id="reviewForm">
-                        <div class="mb-3">
-                            <label for="Title" class="form-label">Title</label>
-                            <input type="text" class="form-control" id="Title" required />
-                        </div>
-                        <div class="mb-3">
-                            <label for="Description" class="form-label">Comment</label>
-                            <textarea class="form-control" id="Description" rows="3" required></textarea>
-                        </div>
-                        <div class="mb-3">
-                            <label for="Stars" class="form-label">Rating (1-5)</label>
-                            <select class="form-control" id="Stars" required>
-                                <option value="1">1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                                <option value="5">5</option>
-                            </select>
-                        </div>
-                        <input type="hidden" id="EstablishmentId" value="@Model.Id" />
-                        <button type="submit" class="btn btn-primary submit-review">Submit Review</button>
-                    </form>
-                </div>
-            </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 class="fw-bold mb-3">Gallery</h4>
         </div>
-    </div>
-    
-    <div class="rating pt-4 pb-4" style="width: 100%; border-top: 1px solid black; border-bottom: 1px solid black;">
-        
-    </div>
-    
-    <div class="reviews mt-4">
-        <h3>Reviews</h3>
-        @foreach (var review in Model.Reviews)
+        @*@foreach()
         {
-            <div class="review">
-                <h5>@review.Title</h5>
-                <p>@review.Description</p>
-                <p>Rating: @review.Stars</p>
+            <div class="col-3">
+                <img src="@galleryImage" class="img-fluid rounded mb-2 shadow-sm" alt="Gallery Image">
             </div>
-        }
+        }*@
+    </div>
+    <div class="row mt-4">
+        <div class="col-12 py-3 bg-light border rounded">
+            <h5 class="fw-bold">Rating</h5>
+            <div class="rating pt-4 pb-4" style="width: 100%; border-top: 1px solid black; border-bottom: 1px solid black;"></div>
+        </div>
+    </div>
+    <div class="row mt-4">
+        <div class="col-12">
+            <h4 class="fw-bold">Reviews</h4>
+            @foreach (var review in Model.Reviews)
+            {
+                <div class="card mb-3 shadow-sm">
+                    <div class="card-body">
+                        <h5 class="card-title fw-bold">@review.Title</h5>
+                        <p class="card-text">@review.Description</p>
+                        <p class="card-text text-muted">Rating: @review.Stars</p>
+                    </div>
+                </div>
+            }
+        </div>
     </div>
 </div>
+<div class="modal fade" id="reviewModal" tabindex="-1" aria-labelledby="reviewModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="reviewModalLabel">Add a Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <form id="reviewForm">
+                    <div class="mb-3">
+                        <label for="Title" class="form-label">Title</label>
+                        <input type="text" class="form-control" id="Title" required />
+                    </div>
+                    <div class="mb-3">
+                        <label for="Description" class="form-label">Comment</label>
+                        <textarea class="form-control" id="Description" rows="3" required></textarea>
+                    </div>
+                    <div class="mb-3">
+                        <label for="Stars" class="form-label">Rating (1-5)</label>
+                        <select class="form-control" id="Stars" required>
+                            <option value="1">1</option>
+                            <option value="2">2</option>
+                            <option value="3">3</option>
+                            <option value="4">4</option>
+                            <option value="5">5</option>
+                        </select>
+                    </div>
+                    <input type="hidden" id="EstablishmentId" value="@Model.Id" />
+                    <button type="submit" class="btn btn-primary submit-review">Submit Review</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @section Scripts
 {
