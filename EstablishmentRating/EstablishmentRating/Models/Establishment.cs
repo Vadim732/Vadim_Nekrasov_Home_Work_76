@@ -12,5 +12,7 @@ public class Establishment
     public int? UserId { get; set; }
     public User? User { get; set; }
     
+    public List<GalleryImage>? GalleryImages { get; set; }
+    
     public ICollection<Review>? Reviews { get; set; }
 }
