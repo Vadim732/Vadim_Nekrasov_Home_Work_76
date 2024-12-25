@@ -81,6 +81,41 @@ public class EstablishmentController : Controller
         }
         return View(model);
     }
+
+    [HttpPost]
+    public async Task<IActionResult> UploadGalleryImage(IFormFile file, int id)
+    {
+        if (ModelState.IsValid)
+        {
+            Establishment establishment = await _context.Establishments.FirstOrDefaultAsync(e => e.Id == id);
+        
+            if (file != null && file.Length > 0 && file.ContentType.StartsWith("image/"))
+            {
+                string fileName = $"establishment_{Guid.NewGuid()}{Path.GetExtension(file.FileName)}";
+                string filePath = Path.Combine(_environment.WebRootPath, "establishmentImages/gallery", fileName);
+                
+                Directory.CreateDirectory(Path.GetDirectoryName(filePath));
+                
+                using (FileStream stream = new FileStream(filePath, FileMode.Create))
+                {
+                    await file.CopyToAsync(stream);
+                }
+                
+                GalleryImage galleryImage = new GalleryImage()
+                {
+                    ImagePath = $"/establishmentImages/gallery/{fileName}",
+                    EstablishmentId = establishment.Id
+                };
+                await _context.GalleryImages.AddAsync(galleryImage);
+                await _context.SaveChangesAsync();
+            }
+        
+            return RedirectToAction("Details", new { id = establishment.Id });
+        }
+
+        return NotFound();
+    }
+
     public IActionResult Details(int id)
     {
         if (id == null)

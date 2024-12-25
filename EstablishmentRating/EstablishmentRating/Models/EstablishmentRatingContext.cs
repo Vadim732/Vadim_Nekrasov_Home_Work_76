@@ -9,6 +9,7 @@ public class EstablishmentRatingContext : IdentityDbContext<User, IdentityRole<i
     public DbSet<User> Users { get; set; }
     public DbSet<Establishment> Establishments { get; set; }
     public DbSet<Review> Reviews { get; set; }
+    public DbSet<GalleryImage> GalleryImages { get; set; }
     
     public EstablishmentRatingContext(DbContextOptions<EstablishmentRatingContext> options) : base(options) {}
     

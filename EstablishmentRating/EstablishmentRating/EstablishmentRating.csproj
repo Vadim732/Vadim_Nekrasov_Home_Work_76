@@ -18,6 +18,7 @@
 
     <ItemGroup>
       <Folder Include="wwwroot\establishmentImages\" />
+      <Folder Include="wwwroot\establishmentImages\gallery\" />
     </ItemGroup>
 
 </Project>
