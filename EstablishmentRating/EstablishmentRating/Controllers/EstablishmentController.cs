@@ -127,6 +127,28 @@ public class EstablishmentController : Controller
     }
 
     [HttpGet]
+    public async Task<IActionResult> GetGalleryImages(int id)
+    {
+        if (id == 0)
+        {
+            return NotFound();
+        }
+
+        Establishment establishment = await _context.Establishments.Include(e => e.GalleryImages).FirstOrDefaultAsync(e=> e.Id == id);
+        if (establishment == null)
+        {
+            return NotFound();
+        }
+
+        List<GalleryImage> images = establishment.GalleryImages;
+        if (images.Count <= 0 && images == null)
+        {
+            return NotFound();
+        }
+        return PartialView("_GalleryImagesPartialView", images);
+    }
+
+    [HttpGet]
     public async Task<IActionResult> GetRating(int id)
     {
         if (id == 0)

@@ -1,0 +1,13 @@
+@model List<GalleryImage>
+
+<div class="row">
+    @if (Model != null && Model.Count > 0)
+    {
+        foreach (GalleryImage i in Model)
+        {
+            <div class="col-xxl-2 col-xl-2 col-md-3 col-sm-4 col-12 mb-xxl-5 mb-xl-5 mb-lg-5 mb-md-4 mb-4">
+                <img src="@i.ImagePath" style="width: 150px; height: 220px"/>
+            </div>
+        }
+    }
+</div>

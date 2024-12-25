@@ -18,6 +18,9 @@
         <div class="col-12">
             <h4 class="fw-bold mb-3">Gallery</h4>
         </div>
+        <div id="gallery">
+            
+        </div>
         @*@foreach()
         {
             <div class="col-3">
@@ -150,6 +153,18 @@
                 });
             });
 
+            function updateGallery(){
+                $.ajax({
+                    url: '@Url.Action("GetGalleryImages")',
+                    data: {
+                        id: @Model.Id
+                    },
+                    success: function (response){
+                        $('#gallery').html(response);
+                    }
+                });
+            };
+
             $('#uploadForm').submit(function (e) {
                 e.preventDefault();
 
@@ -163,6 +178,7 @@
                     processData: false,
                     success: function () {
                         $('#uploadForm')[0].reset();
+                        updateGallery();
                     }
                 });
             });
@@ -179,6 +195,7 @@
                 });
             }
 
+            updateGallery();
             updateRating();
 
             $('.submit-review').click(function () {
