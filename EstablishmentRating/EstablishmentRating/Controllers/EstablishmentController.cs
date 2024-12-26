@@ -31,8 +31,18 @@ public class EstablishmentController : Controller
     {
         if (string.IsNullOrWhiteSpace(query))
         {
-            return Json(new { success = true, establishments = new List<Establishment>() });
+            var allEstablishments = _context.Establishments
+                .Select(e => new
+                {
+                    e.Id,
+                    e.Name,
+                    e.Image
+                })
+                .ToList();
+
+            return Json(new { success = true, establishments = allEstablishments });
         }
+
         var results = _context.Establishments
             .Where(e => e.Name.Contains(query) || e.Description.Contains(query))
             .Select(e => new

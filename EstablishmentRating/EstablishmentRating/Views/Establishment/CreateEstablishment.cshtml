@@ -5,7 +5,7 @@
 }
 
 <div class="container">
-    <h1>Add new place</h1>
+    <h1 class="text-center">Add new place</h1>
     <form asp-action="CreateEstablishment" method="post" enctype="multipart/form-data">
         <div asp-validation-summary="ModelOnly" class="text-danger"></div>
         <div class="form-group">
@@ -23,7 +23,7 @@
             <input type="file" class="form-control" asp-for="Image">
             <span asp-validation-for="Image" class="text-danger"></span>
         </div>
-        <button type="submit" class="btn btn-primary">Submit new place</button>
+        <button type="submit" class="btn btn-primary mt-2">Submit new place</button>
     </form>
 </div>
 
