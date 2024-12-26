@@ -89,14 +89,10 @@
                         <textarea class="form-control" id="Description" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
-                        <label for="Stars" class="form-label">Rating (1-5)</label>
-                        <select class="form-control" id="Stars" required>
-                            <option value="1">1</option>
-                            <option value="2">2</option>
-                            <option value="3">3</option>
-                            <option value="4">4</option>
-                            <option value="5">5</option>
-                        </select>
+                        <label for="Stars" class="form-label">Rating</label>
+                        <div id="starRating" class="d-flex" style="gap: 5px;">
+                        </div>
+                        <input type="hidden" id="Stars" name="Stars" value="1" required />
                     </div>
                     <input type="hidden" id="EstablishmentId" value="@Model.Id" />
                     <button type="submit" class="btn btn-primary submit-review">Submit Review</button>
@@ -133,6 +129,34 @@
 {
     <script>
         $(document).ready(function () {
+            const starContainer = $('#starRating');
+            const hiddenInput = $('#Stars');
+            for (let i = 1; i <= 5; i++) {
+                const star = $('<i>')
+                    .addClass('fa fa-star-o')
+                    .css({
+                        fontSize: '24px',
+                        cursor: 'pointer',
+                        color: '#000000FF'
+                    })
+                    .attr('data-value', i);
+                star.on('click', function () {
+                    const value = $(this).attr('data-value');
+                    hiddenInput.val(value);
+                    updateStars(value);
+                });
+                starContainer.append(star);
+            }
+            function updateStars(value) {
+                starContainer.children('i').each(function (index) {
+                    if (index < value) {
+                        $(this).removeClass('fa-star-o').addClass('fa-star');
+                    } else {
+                        $(this).removeClass('fa-star').addClass('fa-star-o');
+                    }
+                });
+            }
+            updateStars(hiddenInput.val());
             $("#reviewForm").on("submit", function (e) {
                 e.preventDefault();
 
@@ -169,7 +193,7 @@
                             $("#reviewModal").modal('hide');
                             $("#reviewForm")[0].reset();
                             
-                            updateRating();
+                            updateStars(1);
                         } else {
                             alert("Error submitting review!");
                         }

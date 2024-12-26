@@ -1,5 +1,6 @@
 ﻿using EstablishmentRating.Models;
 using EstablishmentRating.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -21,7 +22,7 @@ public class EstablishmentController : Controller
     public IActionResult Index(int page = 1)
     {
         int pageSize = 8;
-        var establishments = _context.Establishments.ToList();
+        var establishments = _context.Establishments.Include(g => g.GalleryImages).Include(r => r.Reviews).ToList();
         return View(establishments);
     }
     
@@ -44,12 +45,12 @@ public class EstablishmentController : Controller
 
         return Json(new { success = true, establishments = results });
     }
-
+    [Authorize]
     public IActionResult CreateEstablishment()
     {
         return View();
     }
-
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateEstablishment(CreateEstablishmentViewModel model)
     {
@@ -81,7 +82,7 @@ public class EstablishmentController : Controller
         }
         return View(model);
     }
-
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> UploadGalleryImage(IFormFile file, int id)
     {
@@ -189,7 +190,7 @@ public class EstablishmentController : Controller
 
         return Json(establishments);
     }
-    
+    [Authorize]
     [HttpPost]
     public IActionResult AddReview(Review review)
     {
