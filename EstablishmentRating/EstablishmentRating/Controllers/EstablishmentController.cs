@@ -225,15 +225,25 @@ public class EstablishmentController : Controller
     [HttpPost]
     public async Task<IActionResult> AddReview(Review review)
     {
-        if (!ModelState.IsValid)
-        {
-            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
-            return Json(new { success = false, errors });
-        }
         var user = await _userManager.GetUserAsync(User);
         if (user == null)
         {
             return Json(new { success = false, errors = new[] { "User not authorized" } });
+        }
+        var existingReview = _context.Reviews.FirstOrDefault(r => r.UserId == user.Id && r.EstablishmentId == review.EstablishmentId);
+        if (existingReview != null)
+        {
+            return Json(new { 
+                success = false, 
+                hasReview = true, 
+                reviewId = existingReview.Id, 
+                message = "You have already submitted a review for this establishment." 
+            });
+        }
+        if (!ModelState.IsValid)
+        {
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+            return Json(new { success = false, errors });
         }
 
         review.UserId = user.Id;
@@ -252,6 +262,27 @@ public class EstablishmentController : Controller
         };
 
         return Json(new { success = true, review = newReview });
+    }
+    [Authorize]
+    [HttpPost]
+    public async Task<IActionResult> DeleteReview(int id)
+    {
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Json(new { success = false, message = "User not authorized" });
+        }
+
+        var review = await _context.Reviews.FindAsync(id);
+        if (review == null || review.UserId != user.Id)
+        {
+            return Json(new { success = false, message = "Review not found or you are not authorized to delete it" });
+        }
+
+        _context.Reviews.Remove(review);
+        await _context.SaveChangesAsync();
+
+        return Json(new { success = true });
     }
 
 }

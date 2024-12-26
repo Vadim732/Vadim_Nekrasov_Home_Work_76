@@ -121,6 +121,24 @@
         </div>
     </div>
 </div>
+<div class="modal fade" id="confirmDeleteModal" tabindex="-1" aria-labelledby="confirmDeleteModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="confirmDeleteModalLabel">Replace Your Review</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                <p>You have already submitted a review for this establishment. Would you like to delete your previous review and create a new one?</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="btn btn-danger" id="deleteAndCreateReview">Delete and Create New</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 @if (Model.GalleryImages != null && Model.GalleryImages.Count > 0)
 {
@@ -199,31 +217,37 @@
                     },
                     success: function (response) {
                         if (response.success) {
-                            var starsHtml = "";
-                            for (let i = 1; i <= 5; i++) {
-                                starsHtml += i <= response.review.stars
-                                    ? `<i class="fa fa-star text-black"></i>`
-                                    : `<i class="fa fa-star-o text-black"></i>`;
-                            }
-
-                            var reviewHtml = `
-                <div class="card mb-3 shadow-sm">
-                    <div class="card-body">
-                        <h5 class="card-title fw-bold">${response.review.title}</h5>
-                        <p class="card-text">${response.review.description}</p>
-                        <p class="card-text text-muted">Rating: ${starsHtml} (${response.review.stars})</p>
-                        <p class="card-text text-muted">
-                            By: ${response.review.userName} | Date: ${response.review.createdAt}
-                        </p>
-                    </div>
-                </div>
-                `;
-                            $(".reviews").append(reviewHtml);
-
+                            addReviewToUI(response.review);
                             $("#reviewModal").modal('hide');
                             $("#reviewForm")[0].reset();
-                            
-                            updateStars(1);
+                        } else if (response.hasReview) {
+                            $("#confirmDeleteModal").modal('show');
+                            $("#deleteAndCreateReview").off("click").on("click", function () {
+                                $.ajax({
+                                    url: `/Establishment/DeleteReview/${response.reviewId}`,
+                                    type: "POST",
+                                    success: function () {
+                                        $.ajax({
+                                            url: "/Establishment/AddReview/",
+                                            type: "POST",
+                                            data: {
+                                                Stars: stars,
+                                                Title: title,
+                                                Description: description,
+                                                EstablishmentId: establishmentId
+                                            },
+                                            success: function (response) {
+                                                if (response.success) {
+                                                    addReviewToUI(response.review);
+                                                    $("#confirmDeleteModal").modal('hide');
+                                                    $("#reviewModal").modal('hide');
+                                                    $("#reviewForm")[0].reset();
+                                                }
+                                            }
+                                        });
+                                    }
+                                });
+                            });
                         } else {
                             alert("Error submitting review!");
                         }
@@ -237,6 +261,29 @@
                     }
                 });
             });
+            
+            function addReviewToUI(review) {
+                var starsHtml = "";
+                for (let i = 1; i <= 5; i++) {
+                    starsHtml += i <= review.stars
+                        ? `<i class="fa fa-star text-black"></i>`
+                        : `<i class="fa fa-star-o text-black"></i>`;
+                }
+
+                var reviewHtml = `
+            <div class="card mb-3 shadow-sm">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">${review.title}</h5>
+                    <p class="card-text">${review.description}</p>
+                    <p class="card-text text-muted">Rating: ${starsHtml} (${review.stars})</p>
+                    <p class="card-text text-muted">
+                        By: ${review.userName} | Date: ${review.createdAt}
+                    </p>
+                </div>
+            </div>
+        `;
+                $(".reviews").append(reviewHtml);
+            }
 
             function updateGallery(){
                 $.ajax({
@@ -280,6 +327,7 @@
             function updateRating() {
                 $.ajax({
                     url: '@Url.Action("GetRating")',
+                    type: 'GET',
                     data: {
                         id: @Model.Id
                     },
