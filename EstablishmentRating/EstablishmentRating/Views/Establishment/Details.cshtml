@@ -20,21 +20,9 @@
         </div>
         @if (Model.GalleryImages != null && Model.GalleryImages.Count > 0)
         {
-            <div id="gallery">
-                <div id="carouselExampleInterval" class="carousel slide" data-bs-ride="carousel" style="width: 450px; height: 600px;">
-                    <div class="carousel-inner">
-                    
-                    </div>
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="prev">
-                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Предыдущий</span>
-                    </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleInterval" data-bs-slide="next">
-                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden">Следующий</span>
-                    </button>
-                </div>
-            </div>   
+            <div id="galleryContainer" class="container">
+                <p>Loading gallery...</p>
+            </div>
         }
     </div>
     <div class="row mt-4">
@@ -291,6 +279,21 @@
             $('.submit-review').click(function () {
                 updateRating();
             });
+            function loadGallery(id) {
+                $.ajax({
+                    url: '/Establishment/GetGalleryImages/', 
+                    type: 'GET',
+                    data: { id: id },
+                    success: function (data) {
+                        $('#galleryContainer').html(data);
+                    },
+                    error: function () {
+                        $('#galleryContainer').html('<p>Error loading gallery.</p>');
+                    }
+                });
+            }
+            const establishmentId = @Model.Id;
+            loadGallery(establishmentId);
         });
     </script>
     <script src="https://kit.fontawesome.com/af54fdaf3a.js" crossorigin="anonymous"></script>

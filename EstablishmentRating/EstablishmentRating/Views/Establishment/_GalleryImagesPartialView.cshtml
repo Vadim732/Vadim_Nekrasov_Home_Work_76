@@ -2,15 +2,18 @@
 
 @if (Model != null && Model.Count > 0)
 {
-    int index = 0;
-    foreach (GalleryImage image in Model)
-    {
-        index++;
-        var isActive = index == 1 ? "active" : "";
-        <div id="@index" class="carousel-item @isActive">
-            <button type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModal_@index" style="border: none; padding: 0; margin: 0;">
-                <img src="@image.ImagePath" class="d-block h-100 w-100" alt="gallery-image" style="width: 450px !important; height: 600px !important;">
-            </button>
-        </div>
-    }
+    <div class="row g-3">
+        @foreach (var image in Model)
+        {
+            <div class="col-6 col-md-4 col-lg-2">
+                <div class="card h-100">
+                    <img src="@image.ImagePath" class="card-img-top img-thumbnail" alt="Gallery Image">
+                </div>
+            </div>
+        }
+    </div>
+}
+else
+{
+    <p>No images available.</p>
 }
