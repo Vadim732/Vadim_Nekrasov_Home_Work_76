@@ -55,18 +55,24 @@
     </div>
     <div class="row mt-4">
         <div class="col-12">
-            <h4 class="fw-bold">Reviews</h4>
-            @foreach (var review in Model.Reviews)
+            @if (Model.Reviews != null && Model.Reviews.Any())
             {
-                <div class="reviews">
-                    <div class="card mb-3 shadow-sm">
-                        <div class="card-body">
-                            <h5 class="card-title fw-bold">@review.Title</h5>
-                            <p class="card-text">@review.Description</p>
-                            <p class="card-text text-muted">Rating: @review.Stars</p>
+                <h4 class="fw-bold">Reviews</h4>
+                @foreach (var review in Model.Reviews)
+                {
+                    <div class="reviews">
+                        <div class="card mb-3 shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title fw-bold">@review.Title</h5>
+                                <p class="card-text">@review.Description</p>
+                                <p class="card-text text-muted">Rating: @review.Stars</p>
+                                <p class="card-text text-muted">
+                                    By: @review.User.UserName | Date: @review.CreatedAt.ToString("yyyy-MM-dd")
+                                </p>
+                            </div>
                         </div>
                     </div>
-                </div>
+                } 
             }
         </div>
     </div>
@@ -185,6 +191,9 @@
                                     <h5 class="card-title fw-bold">${response.review.title}</h5>
                                     <p class="card-text">${response.review.description}</p>
                                     <p class="card-text text-muted">Rating: ${response.review.stars}</p>
+                                    <p class="card-text text-muted">
+                                        By: ${response.review.userName} | Date: ${response.review.createdAt}
+                                    </p>
                                 </div>
                             </div>
                             `;

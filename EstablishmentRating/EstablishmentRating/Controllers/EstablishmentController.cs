@@ -119,11 +119,23 @@ public class EstablishmentController : Controller
 
     public IActionResult Details(int id)
     {
-        if (id == null)
+        if (id == 0)
         {
             return NotFound();
         }
-        var establishment = _context.Establishments.Include(a => a.Reviews).Include(e=> e.GalleryImages).FirstOrDefault(e => e.Id == id);
+
+        var establishment = _context.Establishments
+            .Include(a => a.Reviews)
+            .ThenInclude(r => r.User)
+            .Include(e => e.GalleryImages)
+            .Include(u => u.User)
+            .FirstOrDefault(e => e.Id == id);
+
+        if (establishment == null)
+        {
+            return NotFound();
+        }
+
         return View(establishment);
     }
 
@@ -192,21 +204,32 @@ public class EstablishmentController : Controller
     }
     [Authorize]
     [HttpPost]
-    public IActionResult AddReview(Review review)
+    public async Task<IActionResult> AddReview(Review review)
     {
         if (!ModelState.IsValid)
         {
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
             return Json(new { success = false, errors });
         }
+        var user = await _userManager.GetUserAsync(User);
+        if (user == null)
+        {
+            return Json(new { success = false, errors = new[] { "User not authorized" } });
+        }
+
+        review.UserId = user.Id;
+        review.CreatedAt = DateTime.UtcNow;
 
         _context.Reviews.Add(review);
-        _context.SaveChanges();
+        await _context.SaveChangesAsync();
+
         var newReview = new
         {
             title = review.Title,
             description = review.Description,
-            stars = review.Stars
+            stars = review.Stars,
+            createdAt = review.CreatedAt.ToString("yyyy-MM-dd"),
+            userName = user.UserName
         };
 
         return Json(new { success = true, review = newReview });
