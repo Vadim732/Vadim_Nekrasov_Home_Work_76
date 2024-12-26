@@ -21,9 +21,18 @@ public class EstablishmentController : Controller
     }
     public IActionResult Index(int page = 1)
     {
-        int pageSize = 8;
         var establishments = _context.Establishments.Include(g => g.GalleryImages).Include(r => r.Reviews).ToList();
-        return View(establishments);
+        
+        int pageSize = 8;
+        int count = establishments.Count();
+        var items = establishments.Skip((page - 1) * pageSize).Take(pageSize);
+        PageViewModel pvm = new PageViewModel(establishments.Count(), page, pageSize);
+        var eivm = new EstablishmentIndexViewModel()
+        {
+            Establishments = items.ToList(),
+            PageViewModel = pvm
+        };
+        return View(eivm);
     }
     
     [HttpGet]
