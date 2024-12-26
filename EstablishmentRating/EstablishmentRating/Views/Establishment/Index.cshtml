@@ -16,7 +16,7 @@
                     <a asp-action="Details" asp-route-id="@a.Id"><img src="@a.Image" class="card-img-top img-fluid" style="object-fit: cover; height: 300px; width: 700px" alt="Image of @a.Name"></a>
                     <div class="card-body text-center">
                         <a asp-action="Details" asp-route-id="@a.Id"><h5 class="card-title">@a.Name</h5></a>
-                        <div class="rating" id="rating-@a.Id">Загрузка...</div>
+                        <div class="rating" id="rating-@a.Id">Loading...</div>
                         <p>(@a.Reviews.Count reviews)</p>
                         <p><i class="fa-solid fa-camera"></i> @a.GalleryImages.Count photos</p>
                     </div>
@@ -69,7 +69,7 @@
                         });
                     }
                 })
-                .catch(error => console.error('Ошибка загрузки рейтингов:', error));
+                .catch(error => console.error('Error loading ratings:', error));
         }
         document.addEventListener('DOMContentLoaded', function () {
             loadRatings();
@@ -93,7 +93,7 @@
                                             <a href="/Establishment/Details/${establishment.id}">
                                                 <h5 class="card-title">${establishment.name}</h5>
                                             </a>
-                                            <div class="rating" id="rating-${establishment.id}">Загрузка...</div>
+                                            <div class="rating" id="rating-${establishment.id}">Loading...</div>
                                         </div>
                                     </div>
                                 </div>`;
@@ -101,7 +101,7 @@
                         });
                         loadRatings();
                     } else {
-                        container.innerHTML = '<p class="text-center">Заведений не найдено (это печально :с)</p>';
+                        container.innerHTML = '<p class="text-center">No establishments were found (it\'s sad :c)</p>';
                     }
                 })
                 .catch(error => console.error('Ошибка:', error));
